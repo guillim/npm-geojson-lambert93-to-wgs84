@@ -1,0 +1,26 @@
+{
+  "name": "geojson-lambert93-to-wgs84",
+  "version": "1.0.0",
+  "description": "This package gets a geojson with Lambert93 coded points, and transform them into WGS84 which is more standard (GPS)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/guillim/npm-geojson-lambert93-to-wgs84.git"
+  },
+  "keywords": [
+    "lambert93",
+    "wgs84",
+    "convert",
+    "geojson",
+    "conversion"
+  ],
+  "author": "Guillaume Lancrenon",
+  "license": "SEE LICENSE IN LICENCE.md",
+  "bugs": {
+    "url": "https://github.com/guillim/npm-geojson-lambert93-to-wgs84/issues"
+  },
+  "homepage": "https://github.com/guillim/npm-geojson-lambert93-to-wgs84#readme"
+}
