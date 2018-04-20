@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/guillim/npm-geojson-lambert93-to-wgs84/issues"
   },
-  "homepage": "https://github.com/guillim/npm-geojson-lambert93-to-wgs84#readme"
+  "homepage": "https://github.com/guillim/npm-geojson-lambert93-to-wgs84#readme",
+  "bin": {
+    "geojson-lambert93-to-wgs84": "./index.js"
+  }
 }
