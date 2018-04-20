@@ -1,7 +1,9 @@
 #!/usr/bin/env node
 const [,,...args] = process.argv
 console.log(`Hello, your file is called !${args} and will be processed now.`);
-console.log(args[1]);
+
+
+
 console.log('args[0]');
 // var json = require("/Users/guillaumelancrenon/Downloads/secteurs_premier_depart_sdis91.geojson");
 //var json = require("/Users/guillaumelancrenon/Downloads/test.geojson");
