@@ -1,6 +1,6 @@
 {
   "name": "geojson-lambert93-to-wgs84",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "This package gets a geojson with Lambert93 coded points, and transform them into WGS84 which is more standard (GPS)",
   "main": "index.js",
   "scripts": {
