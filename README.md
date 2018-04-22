@@ -18,14 +18,14 @@ npm install --global geojson-lambert93-to-wgs84
 Usage:
   geojson-lambert93-to-wgs84 <file>
 
-Convert the coordinates of a GeoJSON object to and from encoded polylines.
+Convert the coordinates of a GeoJSON object from Lambert 93 encoded polylines to GPS like coordinates WGS84.
 ```
 
 
 ### Example
 
 ```sh
-geojson-lambert93-to-wgs84 tabblock2010_56_pophu.geojson
+geojson-lambert93-to-wgs84 french-cities.geojson
  ```
 
 ## License

@@ -1,44 +1,49 @@
 #!/usr/bin/env node
 const [,,...args] = process.argv
-console.log(`Hello, your file is called !${args} and will be processed now.`);
+const  inputFile = args[0];
+let pointIndex = inputFile.lastIndexOf('.')
+const  outputFile = inputFile.substring(0,pointIndex)+'_processed'+inputFile.substring(pointIndex);
 
+console.log('\r');
+console.log('\r');
+console.log(`geojson-lambert93-to-wgs84 will process your file`);
+console.log(`Results will be stored in the same folder`);
+console.log('\r');
 
-
-console.log('args[0]');
-// var json = require("/Users/guillaumelancrenon/Downloads/secteurs_premier_depart_sdis91.geojson");
+//var json = require("/Users/guillaumelancrenon/Downloads/secteurs_premier_depart_sdis91.geojson");
 //var json = require("/Users/guillaumelancrenon/Downloads/test.geojson");
 
 const fs = require('fs');
 console.log('\r');
 
 try {
-    var json = JSON.parse(fs.readFileSync('/Users/guillaumelancrenon/Downloads/test.geojson', 'utf8'));
-    console.log('json:',json.type);
+    var json = JSON.parse(fs.readFileSync(inputFile, 'utf8'));
 
     //two options: Feature VS FeatureCollection
     if (json.type === 'Feature') {
-        let coord = json.geometry.coordinates;
-        console.log('coord',typeof coord,coord);
-        console.log(JSON.stringify(coord).match(/[^\]]*/ || [])[0]);
-        let arrayDepth = JSON.stringify(coord).match(/[^\]]*/ || [])[0].match(/\[/g).length;
+        let jsonOutput = {};
+        jsonOutput = transformFeature(json);
+        fs.writeFileSync(outputFile,JSON.stringify(jsonOutput));
 
-        switch (arrayDepth) {
-          case 1:
-            console.log('GeoJSON format supported');
-            let res = lambert93toWGPS(coord[0], coord[1])
-            console.log(res);
-            let file = json
-            file.geometry.coordinates = res;
-            //fs.writeFileSync('/Users/guillaumelancrenon/Downloads/test2.geojson',JSON.stringify(file));
-            break;
-          default:
-            console.log(' GeoJSON format not yet supported');
-        }
+        console.log('\r');
+        console.log('\r');
+        console.log(`Your file is now converted. You can see read the result under ${outputFile}.`);
+    }else if (json.type === 'FeatureCollection' && json.features.length > 0) {
+        let featuresConverted = [];
+        json.features.forEach(function(feature){
+           featuresConverted.push( transformFeature(feature) )
+        })
+        json.features = featuresConverted
+        fs.writeFileSync(outputFile,JSON.stringify(json));
+
+        console.log('\r');
+        console.log('\r');
+        console.log(`Your file is now converted. You can see read the result under ${outputFile}.`);
     }else{
-        console.log('coord FeatureCollection');
+        console.log('\r');
+        console.log('\r');
+        console.log('Feature or FeatureCollection not recognised in the GeoJSON');
     }
-
-
 } catch (err) {
     console.log('error detected: ',err.toString().substring(0, 150).replace(/[\r\n\v]/,' ') + '...\r\r')
     console.log('Maybe your geojson is in a wrong format? \rSee http://geojson.org/ for more information about the expected format');
@@ -46,6 +51,8 @@ try {
 
 
 
+console.log('\r');
+console.log('\r');
 
 
 
@@ -82,4 +89,64 @@ function lambert93toWGPS(lambertE, lambertN) {
 
     // return {longitude: longitude, latitude: latitude};
     return [longitude,latitude]
+}
+
+
+
+function transformFeature(json){
+      let coord = json.geometry.coordinates;
+      //console.log(JSON.stringify(coord).match(/[^\]]*/ || [])[0]);
+      let arrayDepth = JSON.stringify(coord).match(/[^\]]*/ || [])[0].match(/\[/g).length;
+      let newCoordinates, fileToWrite;
+      switch (arrayDepth) {
+        case 1:
+          console.log('Format type "Point" detected');
+          newCoordinates = lambert93toWGPS(coord[0], coord[1])
+          fileToWrite = json
+          fileToWrite.geometry.coordinates = newCoordinates;
+          return fileToWrite;
+          break;
+        case 2:
+          console.log('Format type "LineString" or "MultiPoint" detected');
+          newCoordinates = [];
+          for (var i = 0; i < coord.length; i++) {
+              newCoordinates[i] = lambert93toWGPS(coord[i][0], coord[i][1])
+          }
+          fileToWrite = json
+          fileToWrite.geometry.coordinates = newCoordinates;
+          return fileToWrite;
+          break;
+        case 3:
+          console.log('Format type "Polygon" or "MultiLineString" detected');
+          newCoordinates = [];
+          for (var i = 0; i < coord.length; i++) {
+              newCoordinates[i] = []
+              for (var j = 0; j < coord[i].length; j++) {
+                  newCoordinates[i][j] = lambert93toWGPS(coord[i][j][0], coord[i][j][1])
+              }
+          }
+          fileToWrite = json
+          fileToWrite.geometry.coordinates = newCoordinates;
+          return fileToWrite;
+          break;
+          case 4:
+            console.log('Format type "MultiPolygon" detected');
+            newCoordinates = [];
+            for (var i = 0; i < coord.length; i++) {
+                newCoordinates[i] = []
+                for (var j = 0; j < coord[i].length; j++) {
+                    newCoordinates[i][j] = []
+                    for (var k = 0; k < coord[i][j].length; k++) {
+                        newCoordinates[i][j][k] = lambert93toWGPS(coord[i][j][k][0], coord[i][j][k][1])
+                    }
+                }
+            }
+            fileToWrite = json
+            fileToWrite.geometry.coordinates = newCoordinates;
+            return fileToWrite;
+            break;
+        default:
+          console.log('GeoJSON format not yet supported');
+          return {};
+      }
 }
