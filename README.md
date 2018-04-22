@@ -2,6 +2,8 @@
 
 Convert GeoJSON coordinates from Lambert 93 encoded points to WGS84.
 
+The file can be a Feature or a FeatureCollection, doesn't matter.
+However, it must follow the http://geojson.org structure format. See https://en.wikipedia.org/wiki/GeoJSON for more information
 
 ## Command Line Interface (CLI)
 
